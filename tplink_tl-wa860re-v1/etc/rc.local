@@ -1,0 +1,27 @@
+# Put your custom commands here that should be executed once
+# the system init finished. By default this file does nothing.
+
+# @since 2023.03.12
+RAM_ROOT_SH=/root/ram-root.sh
+OLD_ROOT=/old-root
+
+[ -x "$RAM_ROOT_SH" ] && $RAM_ROOT_SH $OLD_ROOT && {
+    # Don't install if ram-root failed.
+    # We could fill all free space with incomplete install debris.
+    [ -d $OLD_ROOT ] && {
+        while true; do
+            # Connectivity check.
+            ping -c1 downloads.openwrt.org && {
+                opkg update
+                opkg install kmod-ath9k wpad-basic-wolfssl
+                service network restart
+                break
+            }
+        done
+    } || {
+        logger -t rc.local "${RAM_ROOT_SH} setup failed, skipping wireless installation."
+    }
+}
+
+exit 0
+# set vim: ft=sh:
