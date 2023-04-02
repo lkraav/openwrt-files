@@ -53,5 +53,27 @@
     exit 0
 }
 
+# x86_64 generic: 22.03.3
+#
+# Protectli Vault FW6A
+#
+# @see https://forum.openwrt.org/t/tips-for-getting-cheap-used-x86-based-firewall-with-full-gbit-nat-a-pc-engines-apu-if-you-are-in-the-us/104490/392?u=lkraav
+[ generic = "$1" ] && {
+    make -C "$2" image PACKAGES=" \
+        luci-app-fwknopd \
+        luci-app-wireguard \
+        luci-proto-wireguard \
+        luci-ssl \
+        -kmod-ppp \
+        -odhcp6c \
+        -odhcpd-ipv6only \
+        -ppp \
+        -ppp-mod-pppoe \
+        wireguard-tools \
+    " FILES="${PWD}/$1"
+
+    exit 0
+}
+
 echo "Error: profile $1 not implemented."
 exit 1
